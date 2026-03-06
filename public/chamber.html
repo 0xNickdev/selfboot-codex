@@ -22,8 +22,8 @@ html{font-size:32px}html,body{height:100%;overflow:hidden;background:var(--bg);c
 #app{display:flex;flex-direction:column;height:100%;overflow:hidden;flex:1}
 
 /* ── TOP NAV ── */
-.topnav{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--border);background:var(--bg2);z-index:200;position:relative;padding:0;flex-shrink:0}
-.tn-brand{display:flex;align-items:center;gap:9px;padding:0 16px;border-right:1px solid var(--border);height:100%;flex-shrink:0}
+.topnav{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--border);background:var(--bg2);z-index:200;position:relative;padding:0;flex-shrink:0;height:44px}
+.tn-brand{display:flex;align-items:center;gap:8px;padding:0 12px;border-right:1px solid var(--border);height:100%;flex-shrink:0}
 .back-btn{font-family:var(--mono);font-size:.38rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
 .back-btn:hover{color:var(--text)}
 .ndiv{width:1px;height:16px;background:var(--border)}
@@ -32,10 +32,10 @@ html{font-size:32px}html,body{height:100%;overflow:hidden;background:var(--bg);c
 .nav-title{font-family:var(--mono);font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
 .nav-title em{color:var(--warm);font-style:normal}
 .tab-bar{display:flex;align-items:stretch;flex:1;height:100%}
-.tab{display:flex;align-items:center;gap:7px;padding:0 20px;font-family:var(--mono);font-size:.38rem;letter-spacing:.14em;text-transform:uppercase;color:#9a9288;cursor:pointer;border-right:1px solid var(--border);border-bottom:2px solid transparent;transition:all .2s;flex-shrink:0}
+.tab{display:flex;align-items:center;gap:5px;padding:0 14px;font-family:var(--mono);font-size:.3rem;letter-spacing:.1em;text-transform:uppercase;color:#9a9288;cursor:pointer;border-right:1px solid var(--border);border-bottom:2px solid transparent;transition:all .2s;flex-shrink:0;height:100%}
 .tab:hover{color:var(--text2);background:rgba(255,255,255,.02)}
 .tab.active{color:var(--warm);border-bottom-color:var(--warm);background:rgba(200,160,96,.04)}
-.tab-icon{font-size:.7rem;opacity:.7}
+.tab-icon{font-size:.56rem;opacity:.7;flex-shrink:0}
 .tn-right{display:flex;align-items:center;gap:12px;padding:0 16px;margin-left:auto;flex-shrink:0}
 .npill{font-family:var(--mono);font-size:.36rem;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--border);border-radius:1px;color:var(--muted)}
 .npill.live{border-color:rgba(106,152,112,.35);color:var(--ok)}
@@ -48,13 +48,13 @@ html{font-size:32px}html,body{height:100%;overflow:hidden;background:var(--bg);c
 .settings-btn:hover{color:var(--warm);border-color:rgba(200,160,96,.35)}
 
 /* ── TAB CONTENT ── */
-.tab-content{display:none;overflow:hidden;min-height:0}
-.tab-content.active{display:flex;flex-direction:column}
+.tab-content{display:none;overflow:hidden;min-height:0;flex:1}
+.tab-content.active{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
 
 /* ══════════════════════════════════════════════════
    TAB 1 — OPS FIELD
 ══════════════════════════════════════════════════ */
-.ops-layout{display:grid;grid-template-columns:240px 1fr 268px;flex:1;overflow:hidden;min-height:0}
+.ops-layout{display:grid;grid-template-columns:240px 1fr 268px;flex:1;overflow:hidden;min-height:0;height:100%}
 .panel{display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--border);background:var(--bg2)}
 .panel-r{border-right:none;border-left:1px solid var(--border);background:var(--bg2)}
 .pscroll{flex:1;overflow-y:auto;overflow-x:hidden}
@@ -517,7 +517,7 @@ html{font-size:32px}html,body{height:100%;overflow:hidden;background:var(--bg);c
 </nav>
 
 <!-- TABS WRAPPER -->
-<div id="tabs-wrapper" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0">
+<div id="tabs-wrapper" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;height:0">
 
 <!-- TAB 1: OPS FIELD -->
 <div class="tab-content active" id="tab-ops" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
@@ -1188,7 +1188,9 @@ async function makeAPICall(messages,label,opts={}){
 // ARCH LIST + RECENT CALLS
 // ═══════════════════════════════════════════════════════
 function renderArchList(){
-  const list=document.getElementById('arch-list');list.innerHTML='';
+  const list=document.getElementById('arch-list');
+  if(!list){console.warn('arch-list not found');return;}
+  list.innerHTML='';
   Object.entries(TYPES).forEach(([key,t])=>{
     const d=document.createElement('div');d.className='acard';
     d.innerHTML=`<div class="ac-hd"><span class="ac-sym" style="color:${t.col}">${t.sym}</span><span class="ac-key" style="color:${t.col}">${key}</span></div><div class="ac-name">${t.name}</div><div class="ac-role">${t.role}</div><div class="ac-caps">${t.caps.map(c=>`<span class="acap">${c}</span>`).join('')}</div><div style="display:flex;justify-content:flex-end;margin-top:4px"><button class="dep-btn" data-type="${key}">Deploy →</button></div>`;
@@ -1705,6 +1707,8 @@ setTimeout(triggerScan,3000);
 // INIT
 // ═══════════════════════════════════════════════════════
 (async function init(){
+  // Wait for DOM to be fully ready
+  await new Promise(r=>setTimeout(r,50));
   renderArchList();
   await loadStats();
   updateRecentCalls();
