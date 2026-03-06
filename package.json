@@ -1,0 +1,13 @@
+{
+  "name": "selfboot-codex",
+  "version": "3.0.0",
+  "description": "Self-Boot Codex — AI Ops Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

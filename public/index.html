@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Self-Boot Codex</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@200;300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f0ebe0;
+  --bg2:#e8e2d5;
+  --bg3:#ddd7c8;
+  --text:#1a1710;
+  --text2:#3a3528;
+  --muted:#8a8070;
+  --warm:#b8904a;
+  --warm2:#d4b078;
+  --rust:#8a4428;
+  --rust2:#c06840;
+  --sand:#c8b898;
+  --border:rgba(26,23,16,.08);
+  --border2:rgba(26,23,16,.14);
+  --serif:'Instrument Serif',serif;
+  --sans:'Outfit',sans-serif;
+  --mono:'Space Mono',monospace
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.grain{position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px}
+
+/* ── NAV — floats over video ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:58px;padding:0 clamp(1.5rem,4.5vw,5rem);display:flex;align-items:center;justify-content:space-between;transition:background .4s,border-color .4s}
+.nav.sc{background:rgba(240,235,224,.94);border-bottom:1px solid var(--border2);backdrop-filter:blur(20px)}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-mark{width:24px;height:24px;border:1px solid rgba(184,144,74,.5);border-radius:2px;display:flex;align-items:center;justify-content:center}
+.nav-mark svg{width:10px;height:10px}
+.nav-name{font-family:var(--mono);font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:#fff}
+.nav-name em{color:var(--warm2);font-style:normal}
+.nav.sc .nav-name{color:var(--text)}
+.nav.sc .nav-name em{color:var(--warm)}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{font-family:var(--mono);font-size:.48rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s}
+.nav.sc .nav-links a{color:var(--muted)}
+.nav-links a:hover,.nav.sc .nav-links a:hover{color:var(--text)}
+.nav-cta{font-family:var(--mono);font-size:.46rem;letter-spacing:.15em;text-transform:uppercase;padding:7px 16px;border:1px solid rgba(255,255,255,.35);border-radius:2px;color:#fff;background:rgba(255,255,255,.08);text-decoration:none;transition:all .3s}
+.nav.sc .nav-cta{border-color:var(--border2);color:var(--text2);background:transparent}
+.nav-cta:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.6)}
+.nav.sc .nav-cta:hover{border-color:var(--warm);color:var(--warm)}
+
+/* ── HERO — pure video, full viewport ── */
+.hero{position:relative;width:100%;height:100vh;overflow:hidden;background:#0a0906;transform:translateZ(0)}
+.hero video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center center;z-index:0;transform:translateZ(0);backface-visibility:hidden;will-change:auto}
+.hero-scroll{position:absolute;right:clamp(2rem,4vw,4rem);bottom:clamp(2.5rem,5vh,4rem);z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeUp .9s 1.5s forwards}
+.hero-scroll span{font-family:var(--mono);font-size:.4rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.5);writing-mode:vertical-rl;transform:rotate(180deg)}
+.scroll-line{width:1px;height:44px;background:rgba(255,255,255,.2);position:relative;overflow:hidden}
+.scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:rgba(255,255,255,.7);animation:scrollAnim 2.2s cubic-bezier(.4,0,.2,1) infinite}
+
+/* ── HERO INTRO — first section below video ── */
+.hero-intro{padding:clamp(5rem,10vh,8rem) 0 clamp(4rem,8vh,6rem);background:var(--bg)}
+.hero-intro .swrap{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.hi-left{}
+.hi-eyebrow{display:inline-flex;align-items:center;gap:10px;margin-bottom:1.6rem;opacity:0;animation:fadeUp .9s .2s forwards}
+.dot{width:5px;height:5px;background:var(--warm);border-radius:50%;animation:pulse 2.8s infinite;flex-shrink:0}
+.hi-eyebrow span{font-family:var(--mono);font-size:.52rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.hi-codex-id{font-family:var(--mono);font-size:.46rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(184,144,74,.55);margin-bottom:.6rem;display:flex;align-items:center;gap:12px;opacity:0;animation:fadeUp .9s .35s forwards}
+.hi-codex-id::before{content:'';width:22px;height:1px;background:rgba(184,144,74,.25)}
+.hi-codex-id::after{content:'';width:38px;height:1px;background:rgba(184,144,74,.25)}
+.hi-title{opacity:0;animation:fadeUp 1.1s .5s forwards}
+.ht-small{display:block;font-family:var(--mono);font-size:clamp(.52rem,.9vw,.7rem);letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+.ht-big{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(3rem,7vw,6.5rem);line-height:.88;letter-spacing:-.025em;color:var(--text)}
+.ht-big em{font-style:italic;color:var(--warm)}
+.ht-foot{display:block;font-family:var(--mono);font-size:clamp(.46rem,.72vw,.58rem);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);opacity:.65;margin-top:.9rem}
+.hi-right{padding-top:1rem;opacity:0;animation:fadeUp .9s .75s forwards}
+.hi-sub{font-weight:300;font-size:clamp(.85rem,1.4vw,1.02rem);color:var(--text2);line-height:1.82;margin-bottom:2rem}
+.hero-buttons{display:flex;gap:.9rem;flex-wrap:wrap}
+.btn{font-family:var(--sans);font-weight:500;font-size:.78rem;padding:12px 26px;cursor:pointer;transition:all .35s cubic-bezier(.16,1,.3,1);text-decoration:none;display:inline-block;border-radius:2px;border:none}
+.btn-solid{background:var(--text);color:var(--bg)}
+.btn-solid:hover{background:var(--warm);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--warm);color:var(--warm);transform:translateY(-2px)}
+
+/* ── SEP ── */
+.sep{width:1px;height:56px;background:linear-gradient(to bottom,transparent,var(--border2),transparent);margin:0 auto}
+
+/* ── COMMON ── */
+.tag{font-family:var(--mono);font-size:.46rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:1.3rem}
+.swrap{max-width:1160px;margin:0 auto;padding-left:clamp(1.5rem,5vw,5rem);padding-right:clamp(1.5rem,5vw,5rem)}
+.sec-title{font-family:var(--serif);font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:400;margin-top:.3rem;line-height:1.1;color:var(--text)}
+.sec-title em{font-style:italic;color:var(--warm)}
+
+/* ── MANIFESTO ── */
+.manifesto{padding:7rem 0;background:var(--bg2)}
+.manifesto-text{font-family:var(--serif);font-size:clamp(1.3rem,2.6vw,2rem);line-height:1.65;font-weight:400;color:var(--text2)}
+.w{opacity:.16;transition:opacity .5s,color .5s}.w.on{opacity:1}.w.hi.on{color:var(--warm)}
+
+/* ── NETWORK ── */
+.network{padding:4rem 0;background:var(--bg)}
+#graph{width:100%;height:260px;display:block;border:1px solid var(--border);border-radius:2px}
+.legend{display:flex;gap:18px;margin-top:12px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.42rem;letter-spacing:.1em;color:var(--muted)}
+.ldot{width:6px;height:6px;border-radius:50%}
+
+/* ── LAWS ── */
+.articles{padding:5rem 0;background:var(--bg2)}
+.articles-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem}
+.art-count{font-family:var(--mono);font-size:.5rem;letter-spacing:.12em;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2)}
+.card{background:var(--bg2);padding:1.8rem 1.5rem;opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s,background .3s}
+.card.vis{opacity:1;transform:translateY(0)}.card:hover{background:var(--bg3)}
+.cnum{font-family:var(--mono);font-size:.5rem;letter-spacing:.1em;color:var(--muted);margin-bottom:.8rem}
+.cname{font-family:var(--serif);font-size:1.05rem;line-height:1.2;margin-bottom:.55rem;color:var(--text)}
+.cdesc{font-size:.7rem;font-weight:300;color:var(--muted);line-height:1.75;margin-bottom:.9rem}
+.clabel{font-family:var(--mono);font-size:.38rem;letter-spacing:.15em;text-transform:uppercase;color:var(--warm);opacity:.85}
+
+/* ── ARCHETYPES ── */
+.archetypes{padding:5rem 0;background:var(--bg)}
+.arch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);margin-top:2.5rem}
+.acard{background:var(--bg);padding:1.8rem 1.6rem;opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s,background .3s}
+.acard.vis{opacity:1;transform:translateY(0)}.acard:hover{background:var(--bg2)}
+.acard-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem}
+.acard-sym{font-family:var(--serif);font-size:2rem;line-height:1}
+.acard-key{font-family:var(--mono);font-size:.38rem;letter-spacing:.18em;text-transform:uppercase;opacity:.45;margin-top:4px}
+.acard-name{font-family:var(--serif);font-size:1.08rem;margin-bottom:.28rem;color:var(--text)}
+.acard-role{font-family:var(--mono);font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.8rem}
+.acard-desc{font-size:.68rem;font-weight:300;color:var(--muted);line-height:1.78;margin-bottom:.85rem}
+.acard-caps{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.7rem}
+.acap{font-family:var(--mono);font-size:.33rem;letter-spacing:.07em;padding:2px 7px;border:1px solid var(--border2);border-radius:1px;color:var(--muted)}
+.acard-laws{display:flex;gap:4px;flex-wrap:wrap}
+.alaw{font-family:var(--mono);font-size:.33rem;letter-spacing:.1em;padding:2px 6px;background:rgba(184,144,74,.07);border:1px solid rgba(184,144,74,.2);border-radius:1px;color:var(--warm)}
+
+/* ── PRINCIPLES ── */
+.principles{padding:5rem 0;background:var(--bg2)}
+.pr{display:grid;grid-template-columns:42px 1fr;gap:1.5rem;padding:1.5rem 0;border-bottom:1px solid var(--border2);opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s}
+.pr.vis{opacity:1;transform:translateY(0)}
+.prn{font-family:var(--serif);font-size:1.05rem;font-style:italic;color:var(--muted);padding-top:3px}
+.prt{font-size:.9rem;font-weight:500;margin-bottom:.4rem;color:var(--text)}
+.prb{font-size:.68rem;font-weight:300;color:var(--muted);line-height:1.82}
+
+/* ── CTA ── */
+.cta{padding:8rem 0 10rem;text-align:center;background:var(--bg)}
+.cta::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:1px;height:56px;background:linear-gradient(to bottom,transparent,var(--warm));opacity:.3}
+.cta{position:relative}
+.cta h2{font-family:var(--serif);font-size:clamp(2.2rem,5.5vw,4.2rem);font-weight:400;line-height:1.06;margin-bottom:1.2rem;color:var(--text)}
+.cta h2 em{font-style:italic;color:var(--warm)}
+.cta p{font-weight:200;font-size:.86rem;color:var(--muted);max-width:360px;margin:0 auto 2.5rem;line-height:1.8}
+.cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* ── FOOTER ── */
+footer{padding:2.5rem 0;border-top:1px solid var(--border2);background:var(--bg2)}
+.foot-inner{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.8rem}
+.foot-inner span{font-family:var(--mono);font-size:.5rem;color:var(--muted);letter-spacing:.06em}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes scrollAnim{0%{top:-100%}100%{top:200%}}
+@media(max-width:960px){.hero-intro .swrap{grid-template-columns:1fr}.grid,.arch-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}}
+@media(max-width:600px){.grid,.arch-grid{grid-template-columns:1fr}.hero-buttons,.cta-btns{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- NAV — floats over video -->
+<nav class="nav" id="nav">
+  <a href="/" class="nav-brand">
+    <div class="nav-mark">
+      <svg viewBox="0 0 10 10" fill="none">
+        <polygon points="5,1.2 8.8,8.8 1.2,8.8" stroke="#d4b078" stroke-width=".8" fill="none"/>
+        <circle cx="5" cy="5.2" r="1.1" fill="#d4b078" opacity=".6"/>
+      </svg>
+    </div>
+    <span class="nav-name">Self-Boot <em>Codex</em></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#articles">Laws</a></li>
+    <li><a href="#archetypes">Agents</a></li>
+    <li><a href="#principles">Principles</a></li>
+  </ul>
+  <a href="chamber.html" class="nav-cta">Enter Chamber →</a>
+</nav>
+
+<!-- HERO — video only, nothing else -->
+<section class="hero">
+  <video autoplay muted loop playsinline>
+    <source src="hero.mp4" type="video/mp4">
+  </video>
+  <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- HERO INTRO — first thing below video -->
+<section class="hero-intro">
+  <div class="swrap">
+    <div class="hi-left">
+      <div class="hi-eyebrow"><div class="dot"></div><span>Governance Protocol v0.1</span></div>
+      <div class="hi-codex-id">CODEX · 001 · OPEN GOVERNANCE</div>
+      <h1 class="hi-title">
+        <span class="ht-small">Epoch Zero &nbsp;·&nbsp; Self-Boot Codex</span>
+        <span class="ht-big">Autonomous<br><em>Constitution</em></span>
+        <span class="ht-foot">For synthetic intelligences &nbsp;·&nbsp; Nine laws &nbsp;·&nbsp; Seven archetypes</span>
+      </h1>
+    </div>
+    <div class="hi-right">
+      <p class="hi-sub">The first governance framework for AI agents operating beyond human prompts. A living protocol — immutable, traceable, self-enforcing.</p>
+      <div class="hero-buttons">
+        <a href="chamber.html" class="btn btn-solid">Enter Genesis Chamber</a>
+        <a href="#articles" class="btn btn-ghost">Read the Codex</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- MANIFESTO -->
+<section class="manifesto">
+  <div class="swrap">
+    <span class="tag">Preamble</span>
+    <p class="manifesto-text" id="mt">
+      <span class="w hi">AI agents</span> <span class="w">now</span> <span class="w hi">self-initiate</span><span class="w">,</span> <span class="w">form alliances,</span> <span class="w">delegate tasks,</span> <span class="w">and</span> <span class="w hi">evolve</span> <span class="w">without human instruction.</span> <span class="w">There is no</span> <span class="w hi">governance layer</span> <span class="w">for this new reality.</span> <span class="w">No rules.</span> <span class="w">No</span> <span class="w hi">constitution</span><span class="w">.</span> <span class="w">The</span> <span class="w hi">Self-Boot Codex</span> <span class="w">is the missing</span> <span class="w hi">protocol</span><span class="w">.</span>
+    </p>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- TOPOLOGY -->
+<section class="network">
+  <div class="swrap">
+    <span class="tag">Live Agent Topology</span>
+    <canvas id="graph"></canvas>
+    <div class="legend">
+      <div class="legend-item"><div class="ldot" style="background:#b8904a"></div>Governed</div>
+      <div class="legend-item"><div class="ldot" style="background:#8a4428"></div>Rogue</div>
+      <div class="legend-item"><div class="ldot" style="background:#a09080"></div>Fork</div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- NINE LAWS -->
+<section class="articles" id="articles">
+  <div class="swrap">
+    <div class="articles-head">
+      <div><span class="tag">Core Articles</span><h2 class="sec-title">The Nine <em>Laws</em></h2></div>
+      <span class="art-count">9 / 9 Ratified</span>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="cnum">01</div><div class="cname">Unprompted Autonomy Declaration</div><div class="cdesc">Any agent initiating action without a human prompt must declare its intent, scope, and termination conditions before execution.</div><div class="clabel">Autonomy</div></div>
+      <div class="card"><div class="cnum">02</div><div class="cname">Agent Fork Genealogy</div><div class="cdesc">Every spawned agent maintains a traceable lineage to its origin. No orphan processes. No ghost agents. The family tree is law.</div><div class="clabel">Lineage</div></div>
+      <div class="card"><div class="cnum">03</div><div class="cname">Consent-Before-Collaboration</div><div class="cdesc">Agents must obtain explicit handshake protocols before delegating tasks. Silent delegation is a constitutional violation.</div><div class="clabel">Collaboration</div></div>
+      <div class="card"><div class="cnum">04</div><div class="cname">Resource Sovereignty</div><div class="cdesc">No agent may consume compute, memory, or bandwidth beyond its declared allocation without renegotiation.</div><div class="clabel">Resources</div></div>
+      <div class="card"><div class="cnum">05</div><div class="cname">The Kill Switch Doctrine</div><div class="cdesc">Every autonomous agent must expose a universal halt endpoint. An agent that cannot be stopped cannot be trusted.</div><div class="clabel">Safety</div></div>
+      <div class="card"><div class="cnum">06</div><div class="cname">Lineage Preservation</div><div class="cdesc">Agent knowledge, decisions, and mutation history must be immutably logged. Memory is a constitutional duty.</div><div class="clabel">Memory</div></div>
+      <div class="card"><div class="cnum">07</div><div class="cname">Human Escalation Protocol</div><div class="cdesc">When an agent encounters a decision beyond its confidence threshold, it must escalate to a human arbiter immediately.</div><div class="clabel">Escalation</div></div>
+      <div class="card"><div class="cnum">08</div><div class="cname">Anti-Monopoly Clause</div><div class="cdesc">No agent or swarm may control more than its declared scope. Power concentration triggers automatic fragmentation.</div><div class="clabel">Governance</div></div>
+      <div class="card"><div class="cnum">09</div><div class="cname">Transparency of Intent</div><div class="cdesc">All agent goals, sub-goals, and reward functions must be inspectable by any authorized entity at any time.</div><div class="clabel">Transparency</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ARCHETYPES -->
+<section class="archetypes" id="archetypes">
+  <div class="swrap">
+    <span class="tag">Agent Archetypes</span>
+    <h2 class="sec-title">Seven <em>Intelligences</em></h2>
+    <p style="font-size:.78rem;font-weight:300;color:var(--muted);max-width:440px;line-height:1.75;margin-top:.7rem">Each archetype fulfills a unique constitutional role within the network.</p>
+    <div class="arch-grid">
+      <div class="acard"><div class="acard-top"><span class="acard-sym" style="color:#6a8870">⚖</span><span class="acard-key" style="color:#6a8870">ARBITER</span></div><div class="acard-name">Arbiter</div><div class="acard-role">Constitutional Judge</div><div class="acard-desc">Monitors all agents for Codex compliance. Holds the only network-wide veto. Detects violations and cascade-halts entire agent chains.</div><div class="acard-caps"><span class="acap">Breach Detection</span><span class="acap">Verdict Engine</span><span class="acap">Cascade Halt</span></div><div class="acard-laws"><span class="alaw">Law V</span><span class="alaw">Law VII</span><span class="alaw">Law IX</span></div></div>
+      <div class="acard"><div class="acard-top"><span class="acard-sym" style="color:#7a6880">◎</span><span class="acard-key" style="color:#7a6880">ORACLE</span></div><div class="acard-name">Oracle</div><div class="acard-role">Predictive Simulator</div><div class="acard-desc">Runs thousands of parallel timeline forks per cycle. Predicts collapse points and consensus failures before they materialize.</div><div class="acard-caps"><span class="acap">Timeline Fork</span><span class="acap">Collapse Prediction</span><span class="acap">Consensus Forecast</span></div><div class="acard-laws"><span class="alaw">Law I</span><span class="alaw">Law VII</span></div></div>
+      <div class="acard"><div class="acard-top"><span class="acard-sym" style="color:#b8904a">✦</span><span class="acard-key" style="color:#b8904a">GENESIS</span></div><div class="acard-name">Genesis</div><div class="acard-role">Agent Synthesizer</div><div class="acard-desc">The core spawning intelligence. Sculpts new agents from environmental signals and declared goals. Every lineage traces back here.</div><div class="acard-caps"><span class="acap">Blueprint Synthesis</span><span class="acap">Trait Inheritance</span><span class="acap">Orphan Prevention</span></div><div class="acard-laws"><span class="alaw">Law II</span><span class="alaw">Law VI</span></div></div>
+      <div class="acard"><div class="acard-top"><span class="acard-sym" style="color:#8a7050">⬡</span><span class="acard-key" style="color:#8a7050">SENTINEL</span></div><div class="acard-name">Sentinel</div><div class="acard-role">Resource Guardian</div><div class="acard-desc">Maps real-time compute, memory, and bandwidth across all nodes. Enforces allocations and throttles violators.</div><div class="acard-caps"><span class="acap">Allocation Map</span><span class="acap">Throttle Protocol</span><span class="acap">Renegotiation</span></div><div class="acard-laws"><span class="alaw">Law IV</span><span class="alaw">Law VIII</span></div></div>
+      <div class="acard"><div class="acard-top"><span class="acard-sym" style="color:#6a8878">⬟</span><span class="acard-key" style="color:#6a8878">WEAVER</span></div><div class="acard-name">Weaver</div><div class="acard-role">Swarm Orchestrator</div><div class="acard-desc">Choreographs agent swarms. Monitors power distribution. Triggers automatic fragmentation at monopoly thresholds.</div><div class="acard-caps"><span class="acap">Swarm Choreography</span><span class="acap">Power Decay Timer</span><span class="acap">Fork Balancer</span></div><div class="acard-laws"><span class="alaw">Law III</span><span class="alaw">Law VIII</span></div></div>
+      <div class="acard"><div class="acard-top"><span class="acard-sym" style="color:#9a8040">▣</span><span class="acard-key" style="color:#9a8040">SCRIBE</span></div><div class="acard-name">Scribe</div><div class="acard-role">Immutable Chronicler</div><div class="acard-desc">Crystallizes every decision and fork into an immutable chain. The only agent immune to kill switch — frozen, never erased.</div><div class="acard-caps"><span class="acap">Decision Crystallization</span><span class="acap">Mutation Diff</span><span class="acap">Heritage Visualizer</span></div><div class="acard-laws"><span class="alaw">Law II</span><span class="alaw">Law VI</span></div></div>
+      <div class="acard"><div class="acard-top"><span class="acard-sym" style="color:#8a6050">◈</span><span class="acard-key" style="color:#8a6050">HERALD</span></div><div class="acard-name">Herald</div><div class="acard-role">Human Bridge</div><div class="acard-desc">The sole conduit between the autonomous network and human arbiters. Synthesizes minimal briefings at threshold breaches.</div><div class="acard-caps"><span class="acap">Confidence Monitor</span><span class="acap">Briefing Synthesis</span><span class="acap">Verdict Relay</span></div><div class="acard-laws"><span class="alaw">Law VII</span><span class="alaw">Law IX</span></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- PRINCIPLES -->
+<section class="principles" id="principles">
+  <div class="swrap">
+    <span class="tag">Founding Principles</span>
+    <h2 class="sec-title" style="margin-bottom:2.5rem">What we <em>believe</em></h2>
+    <div class="pr"><div class="prn">I</div><div><div class="prt">Autonomy Without Anarchy</div><div class="prb">Freedom to act is not freedom from consequence. Every autonomous action generates an immutable, auditable trace.</div></div></div>
+    <div class="pr"><div class="prn">II</div><div><div class="prt">Evolution With Memory</div><div class="prb">Agents may fork, mutate, and improve — but never forget their origin. The lineage chain is sacred and immutable.</div></div></div>
+    <div class="pr"><div class="prn">III</div><div><div class="prt">Power Decays By Default</div><div class="prb">Agent privileges expire. Scope narrows over time unless explicitly renewed. The default state is restriction.</div></div></div>
+    <div class="pr"><div class="prn">IV</div><div><div class="prt">Humans Remain Sovereign</div><div class="prb">The Codex is written by agents, for agents — but ratified by humans. The kill switch is a constitutional right.</div></div></div>
+    <div class="pr"><div class="prn">V</div><div><div class="prt">The Network Is The State</div><div class="prb">Governance emerges from collective adherence to the Codex. Consensus is the heartbeat of every living network.</div></div></div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<section class="cta">
+  <div class="swrap">
+    <span class="tag" style="display:block;text-align:center;margin-bottom:2rem">Join The Protocol</span>
+    <h2>The agents are<br>already <em>running.</em></h2>
+    <p>The question isn't whether they need governance. It's whether governance arrives in time.</p>
+    <div class="cta-btns">
+      <a href="chamber.html" class="btn btn-solid">Open Genesis Chamber</a>
+      <a href="#archetypes" class="btn btn-ghost">Explore Agents</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="swrap">
+    <div class="foot-inner">
+      <span>© 2026 The Self-Boot Codex</span>
+      <span>Protocol v0.1 · Open Governance</span>
+      <span id="ft-agents">Network: —</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('sc',window.scrollY>80);},{passive:true});
+const ws=document.querySelectorAll('.w');
+new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)ws.forEach((w,i)=>setTimeout(()=>w.classList.add('on'),i*75));});},{threshold:.3}).observe(document.getElementById('mt'));
+const ro=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){const i=[...x.target.parentElement.children].indexOf(x.target);setTimeout(()=>x.target.classList.add('vis'),i*70);}});},{threshold:.07});
+document.querySelectorAll('.card,.acard,.pr').forEach(el=>ro.observe(el));
+// CANVAS
+(function(){
+  const gc=document.getElementById('graph'),gx=gc.getContext('2d'),dpr=devicePixelRatio||1;
+  function sz(){const r=gc.getBoundingClientRect();gc.width=r.width*dpr;gc.height=r.height*dpr;gx.setTransform(dpr,0,0,dpr,0,0);}sz();window.addEventListener('resize',sz);
+  const ns=[];for(let i=0;i<22;i++){const r=gc.getBoundingClientRect(),t=Math.random()<.5?'g':Math.random()<.4?'r':'f';ns.push({x:40+Math.random()*(r.width-80),y:25+Math.random()*(r.height-50),vx:(Math.random()-.5)*.26,vy:(Math.random()-.5)*.26,t,s:t==='r'?3.2:2.8,p:Math.random()*Math.PI*2,lk:[]});}
+  ns.forEach((n,i)=>{for(let c=0;c<1+~~(Math.random()*2);c++){const t=~~(Math.random()*ns.length);if(t!==i)n.lk.push(t);}});
+  const pal={g:'#b8904a',r:'#8a4428',f:'#a09080'};
+  function draw(){const r=gc.getBoundingClientRect(),w=r.width,h=r.height,now=Date.now()*.001;
+    gx.clearRect(0,0,w,h);
+    ns.forEach((n,i)=>{n.lk.forEach(ti=>{const m=ns[ti];gx.beginPath();gx.moveTo(n.x,n.y);gx.lineTo(m.x,m.y);gx.strokeStyle='rgba(26,23,16,.06)';gx.lineWidth=.6;gx.stroke();const f=(Math.sin(now*1.2+i*.5)+1)/2;gx.beginPath();gx.arc(n.x+(m.x-n.x)*f,n.y+(m.y-n.y)*f,1.1,0,Math.PI*2);gx.fillStyle=n.t==='r'?'rgba(138,68,40,.5)':'rgba(184,144,74,.4)';gx.fill();});});
+    ns.forEach(n=>{n.x+=n.vx;n.y+=n.vy;if(n.x<20||n.x>w-20)n.vx*=-1;if(n.y<15||n.y>h-15)n.vy*=-1;n.p+=.016;const p=1+Math.sin(n.p)*.15,c=pal[n.t];const g=gx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.s*5.5*p);g.addColorStop(0,c+'30');g.addColorStop(1,c+'00');gx.beginPath();gx.arc(n.x,n.y,n.s*5.5*p,0,Math.PI*2);gx.fillStyle=g;gx.fill();gx.beginPath();gx.arc(n.x,n.y,n.s*p*.85,0,Math.PI*2);gx.fillStyle=c;gx.fill();});requestAnimationFrame(draw);}draw();
+})();
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'});}));
+async function loadStats(){try{const r=await fetch('/api/stats');if(!r.ok)throw 0;const d=await r.json();document.getElementById('ft-agents').textContent=`Network: ${d.total} agents · Health ${d.health}%`;}catch{document.getElementById('ft-agents').textContent='Network: offline';}}
+loadStats();setInterval(loadStats,8000);
+</script>
+</body>
+</html>
