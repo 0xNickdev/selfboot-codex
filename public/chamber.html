@@ -19,10 +19,10 @@
 }
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
 .grain{position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px}
-#app{display:grid;grid-template-rows:50px 1fr 40px;height:100vh}
+#app{display:flex;flex-direction:column;height:100vh;overflow:hidden;flex:1}
 
 /* ── TOP NAV ── */
-.topnav{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--border);background:var(--bg2);z-index:200;position:relative;padding:0}
+.topnav{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--border);background:var(--bg2);z-index:200;position:relative;padding:0;flex-shrink:0}
 .tn-brand{display:flex;align-items:center;gap:9px;padding:0 16px;border-right:1px solid var(--border);height:100%;flex-shrink:0}
 .back-btn{font-family:var(--mono);font-size:.38rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
 .back-btn:hover{color:var(--text)}
@@ -299,7 +299,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .wfe-txt{font-size:.7rem;font-weight:300;color:var(--muted);line-height:1.7}
 
 /* STATUS BAR */
-.statusbar{display:flex;align-items:center;border-top:1px solid var(--border);background:var(--bg2);padding:0 16px;gap:0;flex-shrink:0}
+.statusbar{display:flex;align-items:center;border-top:1px solid var(--border);background:var(--bg2);padding:0 16px;gap:0;flex-shrink:0;height:40px}
 .sb-seg{display:flex;align-items:center;gap:6px;padding:0 12px;border-right:1px solid var(--border)}
 .sb-seg:first-child{padding-left:0}
 .sb-seg:last-child{border-right:none;margin-left:auto;padding-right:0}
@@ -368,7 +368,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 /* ══════════════════════════════════════════════════
    TAB 5 — LIVE AGENTS
 ══════════════════════════════════════════════════ */
-.agents-layout{display:grid;grid-template-columns:280px 1fr;flex:1;overflow:hidden;min-height:0;height:100%}
+.agents-layout{display:grid;grid-template-columns:280px 1fr;overflow:hidden;min-height:0;flex:1;height:100%}
 .agents-sidebar{border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--bg2)}
 .agents-head{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0}
 .agents-list{flex:1;overflow-y:auto}
@@ -488,7 +488,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 </style>
 </head>
 <body style="display:flex;flex-direction:column;height:100vh;overflow:hidden">
-<div class="grain"></div>
+<div class="grain" style="pointer-events:none"></div>
 <div id="app">
 
 <!-- TOP NAV -->
@@ -517,7 +517,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 </nav>
 
 <!-- TABS WRAPPER -->
-<div id="tabs-wrapper" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;position:relative">
+<div id="tabs-wrapper" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0">
 
 <!-- TAB 1: OPS FIELD -->
 <div class="tab-content active" id="tab-ops" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
@@ -753,14 +753,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 </div>
 
 <!-- STATUS BAR -->
-<footer class="statusbar">
-  <div class="sb-seg"><span class="sb-lbl">Budget</span><div class="sb-bar"><div class="sb-fill" id="sb-budget" style="width:0%"></div></div><span class="sb-val" id="sb-bv">—</span></div>
-  <div class="sb-seg"><span class="sb-lbl">Calls</span><span class="sb-val" id="sb-calls">0</span></div>
-  <div class="sb-seg"><span class="sb-lbl">Prompts</span><span class="sb-val" id="sb-prompts">0</span></div>
-  <div class="sb-seg"><span class="sb-lbl">Workflows</span><span class="sb-val" id="sb-wf">0</span></div>
-  <div class="sb-seg"><span class="sb-lbl">Avg ms</span><span class="sb-val" id="sb-lat">—</span></div>
-  <div class="sb-seg"><button class="em-halt" id="em-halt">■ Emergency Halt</button></div>
-</footer>
 </div>
 
 
@@ -2099,5 +2091,13 @@ document.getElementById('soul-consult-btn').addEventListener('click',async()=>{
 
 </script>
 </div><!-- /tabs-wrapper -->
+<footer class="statusbar">
+  <div class="sb-seg"><span class="sb-lbl">Budget</span><div class="sb-bar"><div class="sb-fill" id="sb-budget" style="width:0%"></div></div><span class="sb-val" id="sb-bv">—</span></div>
+  <div class="sb-seg"><span class="sb-lbl">Calls</span><span class="sb-val" id="sb-calls">0</span></div>
+  <div class="sb-seg"><span class="sb-lbl">Prompts</span><span class="sb-val" id="sb-prompts">0</span></div>
+  <div class="sb-seg"><span class="sb-lbl">Workflows</span><span class="sb-val" id="sb-wf">0</span></div>
+  <div class="sb-seg"><span class="sb-lbl">Avg ms</span><span class="sb-val" id="sb-lat">—</span></div>
+  <div class="sb-seg"><button class="em-halt" id="em-halt">■ Emergency Halt</button></div>
+</footer>
 </body>
 </html>
