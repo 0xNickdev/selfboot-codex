@@ -1845,21 +1845,6 @@ async function injectAllDemo(){
     }
   }catch{}
 
-  // SOUL
-  try{
-    const soul=await api('GET','/soul');
-    if(!soul?.id){
-      await api('POST','/soul/init',{name:'Operator'});
-      const decisions=[
-        {decision:'Prioritize user autonomy over engagement metrics. Reject dark patterns entirely.',context:'Product strategy review · Q1',category:'product'},
-        {decision:'Open-source the core inference layer. Competitive moat lives in orchestration.',context:'IP and competitive moat discussion',category:'strategy'},
-        {decision:'Rate-limit any agent spending >$0.01 per call without explicit user approval.',context:'Cost governance policy design',category:'ops'},
-      ];
-      for(const d of decisions)try{await api('POST','/soul/decide',d);}catch{}
-      await api('POST','/soul/pulse',{context:'Soul initialized with 3 founding decisions'});
-    }
-  }catch{}
-
   // Refresh stats and active tab
   loadStats();
   const activeTab=document.querySelector('.tab.active')?.dataset?.tab;
