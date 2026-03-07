@@ -81,7 +81,7 @@ http.createServer(async(req,res)=>{
   if(m==='OPTIONS'){J(res,204,{});return;}
 
   if(pathname==='/api/ping')return J(res,200,{ok:true,ts:Date.now()});
-  if(pathname==="/api/soul/reset"){const sp=path.join(DATA,"soul.json");try{if(fs.existsSync(sp))fs.unlinkSync(sp);}catch{}return J(res,200,{ok:true,message:"Soul wiped"});}
+  if(pathname==="/api/soul/reset"){const sp=path.join(DATA,"soul.json");try{if(fs.existsSync(sp))fs.unlinkSync(sp);}catch{}soul={id:null,name:null,created:null,values:{},decisions:[],patterns:{},fingerprint:null,lastSync:null,pulseLog:[],relationships:{}};return J(res,200,{ok:true,message:"Soul wiped"});}
 
 
   if(pathname==='/api/stats'){
